@@ -3,9 +3,10 @@ declare-option -docstring "modelinefmt backup value." str kakship_modelinefmt_ba
 define-command -docstring "kakship-enable: require kakship module and enable kakship for all regular windows." \
 kakship-enable %{
 	remove-hooks global kakship(-.*)?
-	hook -group kakship global WinCreate ^[^*].*[^*]$ %{
+	hook -group kakship global BufCreate .* %{
 		require-module kakship
-		hook -group kakship window NormalIdle "" starship-modeline
+		#hook -group kakship window NormalIdle ""
+		starship-modeline
 	}
 }
 
@@ -17,14 +18,14 @@ define-command -hidden -docstring "set modeline using kakship" starship-modeline
 		#                     kak_opt_lsp_diagnostic_error_count, kak_opt_lsp_diagnostic_warning_count
 		dir=${kak_buffile%/*}
 		[ "$dir" != "$kak_buffile" ] && cd $dir
-		printf 'set-option window modelinefmt %%{%s}' "$(kakship prompt)"
+		printf 'set-option buffer modelinefmt %%{%s}' "$(kakship prompt)"
 	}
 }
 
 define-command -docstring "disable starship modeline" kakship-disable %{
 	remove-hooks global kakship(-.*)?
-	remove-hooks window kakship(-.*)?
-	set-option window modelinefmt %opt{kakship_modelinefmt_bak}
+	remove-hooks buffer kakship(-.*)?
+	set-option buffer modelinefmt %opt{kakship_modelinefmt_bak}
 }
 
 }
